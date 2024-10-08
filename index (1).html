@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Booking</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body ng-app="ticketBookingApp" ng-controller="TicketController as ctrl">
+    <div class="container">
+        <div class="header">
+            <h2>Book Ticket</h2>
+        </div>
+        <form name="bookingForm">
+            <div class="form-group">
+                <label for="from">From</label>
+                <select id="from" ng-model="ctrl.from" ng-change="ctrl.updateToCities()" required>
+                    <option value="">Select City</option>
+                    <option ng-repeat="city in ctrl.cities" value="{{ city }}">{{ city }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" ng-model="ctrl.date" min="{{ ctrl.getTodayDate() }}" required />
+            </div>
+            <div class="form-group">
+                <label for="to">To</label>
+                <select id="to" ng-model="ctrl.to" ng-change="ctrl.calculateCost()" required>
+                    <option value="">Select City</option>
+                    <option ng-repeat="city in ctrl.filteredCities" value="{{ city }}">{{ city }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="class">Class</label>
+                <select id="class" ng-model="ctrl.class" required>
+                    <option value="">All Classes</option>
+                    <option value="First Class">First Class</option>
+                    <option value="Second Class">Second Class</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" ng-model="ctrl.category">
+                    <option value="GENERAL">GENERAL</option>
+                    <option value="LADIES">LADIES</option>
+                    <option value="SENIOR CITIZEN">SENIOR CITIZEN</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" ng-model="ctrl.disability" /> Person With Disability Concession
+                </label></br>
+                <label>
+                    <input type="checkbox" ng-model="ctrl.flexibleDate" /> Flexible With Date
+                </label></br>
+                <label>
+                    <input type="checkbox" ng-model="ctrl.availableBerth" /> Train with Available Berth
+                </label></br>
+                <label>
+                    <input type="checkbox" ng-model="ctrl.passConcession" /> Railway Pass Concession
+                </label></br>
+            </div>
+            <div class="form-group">
+                <label for="seats">Number of Seats</label>
+                <input type="number" id="seats" ng-model="ctrl.seats" ng-change="ctrl.calculateTotalCost()" min="1" required />
+            </div>
+            <div class="form-group">
+                <label for="cost">Cost per Seat</label>
+                <input type="number" id="cost" ng-model="ctrl.cost" ng-change="ctrl.calculateTotalCost()" min="0" required />
+            </div>
+            <div class="form-group">
+                <label>Total Cost</label>
+                <p>{{ ctrl.totalCost | currency:"INR " }}</p>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn" ng-click="ctrl.search()">Search</button>
+                <button type="button" class="btn" ng-click="ctrl.redirectToIRCTC()">Try booking in IRCTC</button>
+            </div>
+        </form>
+        <div class="search-results" ng-if="ctrl.searchResults.length > 0">
+            <h3>Search Results</h3>
+            <div ng-repeat="result in ctrl.searchResults" >
+              <b><label class="content">
+                    <input type="radio" ng-model="ctrl.selectedResult" ng-value="result" />
+                    <p>From: {{ result.from }} (Departure: {{ result.departureTime }})</p>
+                    <p>To: {{ result.to }} (Arrival: {{ result.arrivalTime }})</p>
+                </label></b>  
+                <hr>
+            </div>
+        </div>
+        <div ng-if="ctrl.totalCost > 0">
+            <button type="button" class="btn" ng-click="ctrl.dummyPay()">Pay</button>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
